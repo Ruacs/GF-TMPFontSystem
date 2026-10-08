@@ -7,6 +7,13 @@ namespace Lokas.Editor.FontCharset
 {
     internal static class TMPStylePresetAuthoring
     {
+        internal static FontStylePreset CreateDraft(FontStylePreset source)
+        {
+            var draft = source == null ? ScriptableObject.CreateInstance<FontStylePreset>() : UnityEngine.Object.Instantiate(source);
+            // HideAndDontSave also contains NotEditable, which disables SerializedProperty controls.
+            draft.hideFlags = HideFlags.HideAndDontSave & ~HideFlags.NotEditable;
+            return draft;
+        }
         internal static void Save(FontStylePreset draft, FontStylePreset destination)
         {
             if (draft == null || destination == null || !EditorUtility.IsPersistent(destination))

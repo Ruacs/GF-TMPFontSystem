@@ -201,10 +201,11 @@ namespace Lokas.Editor.FontCharset.Tests
                     break;
                 }
                 Assert(fallbackTested, "需要第二个 Static 字体来验证字体切换和 fallback。");
-                var draft = Instantiate(preset);
+                var draft = TMPStylePresetAuthoring.CreateDraft(preset);
                 try
                 {
-                    draft.hideFlags = HideFlags.HideAndDontSave;
+                    using (var editable = new SerializedObject(draft))
+                        Assert(editable.FindProperty("faceColor").editable, "草稿参数被锁为只读。");
                     draft.faceColor = Color.blue;
                     string originalPreset = EditorJsonUtility.ToJson(preset);
                     TMPStyleScenePreview.SetDraft(applier, draft);

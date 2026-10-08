@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1 — 2026-10-08
+
+- 修复 TMPStyleApplier 草稿使用 HideAndDontSave 时同时带有 NotEditable，导致 Inspector 参数变灰、无法调整。
+- 草稿仍不保存为资产，保存/另存为与预览隔离方式不变；增加参数可编辑验证。
+
 ## 0.3.0 — 2026-10-08
 
 - TMPStyleApplier 在 Scene / Prefab 编辑态直接预览当前字体的 Face、描边和阴影，支持 UGUI 遮罩与 fallback 子网格。

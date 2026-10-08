@@ -2,7 +2,7 @@
 
 GF 框架的 UPM 字体组件：语言字体加载、样式预设与材质缓存、TMP 样式应用、字符集/SDF 同步及实时样式预览。
 
-包名：`com.ruacs.tmpfont-system`。版本：`0.3.0`。适用 Unity 2022.3，依赖 TextMeshPro 3.0.9 与 UGUI 1.0.0。
+包名：`com.ruacs.tmpfont-system`。版本：`0.3.1`。适用 Unity 2022.3，依赖 TextMeshPro 3.0.9 与 UGUI 1.0.0。
 
 ## 安装
 
@@ -11,7 +11,7 @@ GF 框架的 UPM 字体组件：语言字体加载、样式预设与材质缓存
 在 Window → Package Manager → ＋ → Add package from git URL 输入：
 
 ```text
-https://github.com/Ruacs/GF-TMPFontSystem.git#v0.3.0
+https://github.com/Ruacs/GF-TMPFontSystem.git#v0.3.1
 ```
 
 开发时可通过 Add package from disk 选择本地仓库的 `package.json`，或使用不带版本标签的 Git URL。私有仓库需提前配置 Git 凭据/SSH；UPM 不会弹出交互登录。正式工程固定版本标签，升级时改为新的标签并验证。

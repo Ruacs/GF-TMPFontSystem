@@ -81,8 +81,7 @@ public class TMPStyleApplierEditor : Editor
             sourcePreset = resolved;
             draftTarget = applier;
             draftKey = applier.StyleKey;
-            draft = resolved == null ? CreateInstance<FontStylePreset>() : Instantiate(resolved);
-            draft.hideFlags = HideFlags.HideAndDontSave;
+            draft = TMPStylePresetAuthoring.CreateDraft(resolved);
             draftSerialized = new SerializedObject(draft);
             draftBaseline = EditorJsonUtility.ToJson(draft);
             sourceSnapshot = snapshot;
