@@ -108,7 +108,7 @@ namespace Lokas.Editor.FontCharset
                 if (!targetPaths.Add(scan.fontPath) || !charsetPaths.Add(scan.charsetPath)) throw new InvalidOperationException("多个条目指向同一个字体或字符集。");
                 if (config.languageConfig == null) throw new InvalidOperationException("未设置运行时 TMPLanguageFontConfig。");
                 var matching = config.languageConfig.languageProfiles.Where(e => e != null && e.languageKey.ToString() == entry.language).ToArray();
-                if (matching.Length != 1 || Lokas.AssetUtility.GetTMPFontAsset(matching[0].fontAssetName, true) != scan.fontPath)
+                if (matching.Length != 1 || FontCharsetProjectBridge.GetFontAssetPath(matching[0].fontAssetName) != scan.fontPath)
                     throw new InvalidOperationException(entry.language + " 的 LanguageEntry 与目标字体不一致。");
                 report.languages.Add(scan);
                 if (scan.missingSource.Length > 0) report.success = false;

@@ -45,7 +45,7 @@ namespace Lokas.Editor.FontCharset
             string[] suffixes = { "CNS", "CNT", "JP", "KR" };
             for (int i = 0; i < languages.Length; i++)
             {
-                var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/GameMain/Fonts/MFont_" + suffixes[i] + ".asset");
+                var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontCharsetProjectBridge.GetFontAssetPath("MFont_" + suffixes[i]));
                 if (font == null) throw new InvalidOperationException("找不到字体 MFont_" + suffixes[i]);
                 var sourcePath = AssetDatabase.GUIDToAssetPath(font.creationSettings.sourceFontFileGUID);
                 config.entries.Add(new FontCharsetEntry

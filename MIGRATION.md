@@ -1,19 +1,22 @@
-# 从分散目录升级
+# 从 Assets / 子模块版本迁移到 UPM 0.2.0
 
-本仓库整理了三个来源：TMPFontSystem 的六个运行时脚本、AAA_DevAssets/Editor/FontCharset 工具和 GameMain/Editor 的三个 TMP 编辑器脚本。完整对应关系见 SOURCE_MANIFEST.json。
+## 影响范围
 
-## 保留现有项目
+六个运行时脚本移入 Runtime，编辑器代码留在 Editor；增加包清单与两份 asmdef。既有脚本 GUID、类型名和序列化字段保持不变，FontCharsetConfig 的默认数据路径不变。接口调用新增 Configure(ITMPFontHost)，用于替代包对项目代码的直接调用。
 
-1. 检查并备份本次涉及的脚本、meta、未提交修改和字体配置。先合并目标项目特有代码，不用仓库版本覆盖未知改动。
-2. 通过 Unity AssetDatabase 将原字体编辑器代码归到组件的 Editor/FontCharset、Editor/Styles、Editor/Tests。六个运行时脚本仍在组件根目录。移动时保留原 .meta/GUID；旧位置不能留下同名类型或同 GUID 文件。
-3. 更新项目文档/Skill 的旧工具路径。SOURCE_MANIFEST.json 提供源文件到仓库文件映射。字体配置、源字体、字符集、XML、Preset SO 和图集不随代码迁移。
-4. 完整核对备份后，在关闭 Unity 的维护窗口中转换组件目录的 Git 跟踪方式：保留主项目里的 TMPFontSystem.meta，将普通文件跟踪替换为子模块 gitlink。现有目录非空或已被跟踪时，不直接运行 submodule add，不用强制命令跳过保护。
-5. 同步源码与子模块的提交内容，再打开 Unity 检查编译、SO/Preset/场景引用、工具菜单和真实加载链。主项目提交 .gitmodules、组件 gitlink、原根目录 meta 及必要文档变更。
+## 迁移步骤
 
-当前本地仓库准备只是复制和整理，来源工程尚未转换为子模块。主项目的转换、接入与运行验证是单独步骤；本仓库不提供删除原目录的一键脚本。
+1. 检查现有组件改动并备份脚本/meta、GameEntry 初始化、Packages/manifest.json 与 packages-lock.json。字体、图集、Preset、字符集及翻译继续由项目维护。
+2. 合并目标项目对 TMPFontSystem 的有效修改，确保包中的既有脚本 GUID 与目标资源引用一致。旧文件位置参考 Documentation~/InitialSourceManifest.json。
+3. 在 Unity 暂停导入的维护步骤中，将旧的运行时脚本、AAA_DevAssets/Editor/FontCharset、三个散落的 TMP Editor 脚本通过 AssetDatabase 移至本次专用备份目录，保留 meta；让备份目录以 ~ 结尾，不参与导入。不要让旧 Assets 源码与 UPM 包同时编译，也不要复制丢失 meta 的旧脚本。
+4. 导入 GF Template Integration 样例，或安装项目自己的 ITMPFontHost 与 Editor 路径适配。取到 TMPFontComponent 后先 Configure，再保持原预加载的 SetLanguageConfig 调用。
+5. 添加本地 package.json 或指定 Git 版本；等待包解析、编译完成，确认 MonoScript 路径、场景/SO 引用和工具菜单正确。首次先本地验证，再发布/安装 Git 标签。
+6. 验证扫描、预览及接入协议，再在 PlayMode 验证真实字体加载与页面显示。完成后提交主工程的接入代码、包依赖、锁定文件和必要文档变化。
 
-## 文档与数据
+已使用 Git submodule 的项目需要先保存/提交子模块修改，再解除该子模块的项目跟踪并保留备份；UPM 安装与旧子模块不能同时保留为可编译源码。私有仓库需要目标机器具备 Git 访问权限。
 
-Docs 是组件自己的使用说明，来源项目的语言配置和资源路径转换为示例文本。新文档使用新的 meta，避免与主项目原来的框架手册 GUID 冲突；项目总导航可链接组件手册，避免长期维护两份全文。
+## 恢复
 
-SOURCE_MANIFEST.json 是初始提取记录；它不是之后每次修改的验收结果。后续发布使用 CHANGELOG 和 Git 提交/版本标签记录改动。
+未完成迁移时停止字体更新。移除本次 UPM 依赖，恢复原 manifest/锁定文件与 GameEntry 初始化，再通过 Unity 将原脚本从专用备份移回原位置，保留 GUID。先排除重复脚本和 GUID，再刷新编译；不重建字体或配置来修复代码安装问题。
+
+包不提供删除原组件的一键脚本。其他项目的目录、ID、资源规则和特有接入由该项目维护；来源工程验证不代表目标工程已经验收通过。

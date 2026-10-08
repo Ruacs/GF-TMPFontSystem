@@ -1,0 +1,22 @@
+{
+  "name": "Ruacs.GF.TMPFont.Editor",
+  "rootNamespace": "",
+  "references": [
+    "Ruacs.GF.TMPFont.Runtime",
+    "GameFramework",
+    "UnityGameFramework.Runtime",
+    "Unity.TextMeshPro",
+    "Unity.TextMeshPro.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

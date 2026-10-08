@@ -76,9 +76,9 @@ TMPFontComponent 加载字体、选择 Profile、缓存材质
 
 1. 找目标 LanguageEntry，找不到条目时尝试 English；目标条目存在但 fontAssetName 为空时直接报错，不再替它找英文资源。
 2. 选择条目的 fontProfile，为空时用 defaultProfile。
-3. 先加载 `_DefaultFontName`（脚本默认 MFont_BASE），再加载目标字体。通过 `AssetUtility.GetTMPFontAsset(name, true)` 解析为 `Assets/GameMain/Fonts/{name}.asset`，不自动加 `_CN` / `_EN` 后缀。
+3. 先加载 `_DefaultFontName`（脚本默认 MFont_BASE），再加载目标字体。通过 `项目 ITMPFontHost.GetFontAssetPath(name)` 解析为 `Assets/GameMain/Fonts/{name}.asset`，不自动加 `_CN` / `_EN` 后缀。
 4. 若目标字体与基础字体不同，将基础字体追加到目标字体 fallback 列表。这是“目标字体缺字时找基础字体”，不是把所有语言字库都互设为 fallback。
-5. ApplyProfile 在 Profile 非空时设置 UGuiForm 主字体并发出 OnFontProfileChanged；TMPStyleApplier 接收后更新文本。
+5. ApplyProfile 在 Profile 非空时设置 UGuiForm 主字体并发出 OnFontProfileChanged；TMPStyleApplier 接收后更新文本。项目接入层负责同步 UGuiForm 主字体，编辑器路径通过 FontCharsetProjectBridge 提供。
 
 字体加载失败会记录日志，不会自动换另一套字体重新加载。缺语言条目的 English 回退、defaultProfile 样式回退、基础字体字形回退分别处理不同问题。
 
@@ -178,7 +178,7 @@ UGuiForm.InitLocalization 会遍历子 TMP 文本设置主字体，并将 fontSt
 
 本次只核对配置/代码及文档，不代表上述运行验收已完成。
 
-依据：[TMPFontComponent](../TMPFontComponent.cs)、[TMPLanguageFontConfig](../TMPLanguageFontConfig.cs)、[LanguageEntry](../LanguageEntry.cs)、[TMPFontProfile](../TMPFontProfile.cs)、[FontStylePreset](../FontStylePreset.cs)、[TMPStyleApplier](../TMPStyleApplier.cs)、[TMPFontProfileEditor](../Editor/Styles/TMPFontProfileEditor.cs)。
+依据：[TMPFontComponent](../Runtime/TMPFontComponent.cs)、[TMPLanguageFontConfig](../Runtime/TMPLanguageFontConfig.cs)、[LanguageEntry](../Runtime/LanguageEntry.cs)、[TMPFontProfile](../Runtime/TMPFontProfile.cs)、[FontStylePreset](../Runtime/FontStylePreset.cs)、[TMPStyleApplier](../Runtime/TMPStyleApplier.cs)、[TMPFontProfileEditor](../Editor/Styles/TMPFontProfileEditor.cs)。
 
 ## 制作与更新入口
 
