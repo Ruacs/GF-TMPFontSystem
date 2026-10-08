@@ -136,6 +136,7 @@ namespace Lokas.Editor.FontCharset
                         !Resolve(applier.StyleKey, out var preset, out _)) continue;
                     int id = applier.GetInstanceID();
                     if (Drafts.TryGetValue(id, out var draft) && draft != null) preset = draft;
+                    if (preset == null && text.fontSharedMaterial == text.font.material) continue;
                     live.Add(id);
                     int signature = Fingerprint(applier.StyleKey, text.font, preset);
                     if (!Previews.TryGetValue(id, out var preview))

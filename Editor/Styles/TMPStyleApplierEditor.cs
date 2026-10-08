@@ -17,7 +17,8 @@ public class TMPStyleApplierEditor : Editor
     private TMPStyleApplier draftTarget;
     private string draftKey, sourceSnapshot, draftBaseline, newKey;
     private TMPFontProfile saveProfile;
-    private bool showParameters = true, showSaveAs;
+    private bool showParameters, showSaveAs;
+    private SerializedObject draftSerialized;
     private string authoringMessage;
 
     private void OnEnable() { EditorApplication.projectChanged += ProjectChanged; Undo.undoRedoPerformed += Repaint; }
@@ -31,6 +32,8 @@ public class TMPStyleApplierEditor : Editor
     private void ReleaseDraft()
     {
         if (draftTarget != null) TMPStyleScenePreview.SetDraft(draftTarget, null);
+        draftSerialized?.Dispose();
+        draftSerialized = null;
         if (draft != null) { Undo.ClearUndo(draft); DestroyImmediate(draft); }
         draft = null;
         draftTarget = null;
@@ -80,19 +83,19 @@ public class TMPStyleApplierEditor : Editor
             draftKey = applier.StyleKey;
             draft = resolved == null ? CreateInstance<FontStylePreset>() : Instantiate(resolved);
             draft.hideFlags = HideFlags.HideAndDontSave;
+            draftSerialized = new SerializedObject(draft);
             draftBaseline = EditorJsonUtility.ToJson(draft);
             sourceSnapshot = snapshot;
             newKey = string.IsNullOrEmpty(draftKey) ? "NewStyle" : draftKey + "_Copy";
             saveProfile = ResolveSaveProfile(draftKey, resolved);
-            TMPStyleScenePreview.SetDraft(applier, draft);
         }
         using (new EditorGUI.DisabledScope(true)) EditorGUILayout.ObjectField("当前预设", sourcePreset, typeof(FontStylePreset), false);
         if (changed && sourceSnapshot != snapshot)
             EditorGUILayout.HelpBox("来源预设已被其他操作修改。保存会用当前草稿覆盖；也可以另存为独立样式。", MessageType.Warning);
-        var draftObject = new SerializedObject(draft);
+        var draftObject = draftSerialized;
         draftObject.Update();
         DrawPropertiesExcluding(draftObject, "m_Script");
-        if (draftObject.ApplyModifiedProperties()) TMPStyleScenePreview.Refresh();
+        if (draftObject.ApplyModifiedProperties()) TMPStyleScenePreview.SetDraft(applier, draft);
         using (new EditorGUILayout.HorizontalScope())
         {
             using (new EditorGUI.DisabledScope(sourcePreset == null))
