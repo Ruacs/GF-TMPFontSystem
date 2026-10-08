@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2 — 2026-10-08
+
+- 按目标 TMPStyleApplier 保留参数面板展开状态和样式草稿，避免 Inspector 重建时自动折叠并丢失修改。
+- Inspector 临时重建复用编辑状态，真正切换/关闭时延迟清理；程序集重载仍释放临时对象。
+- 增加连续十次重建 Inspector 的展开状态与草稿保留验证。
+
 ## 0.3.1 — 2026-10-08
 
 - 修复 TMPStyleApplier 草稿使用 HideAndDontSave 时同时带有 NotEditable，导致 Inspector 参数变灰、无法调整。

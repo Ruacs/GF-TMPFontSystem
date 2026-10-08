@@ -33,7 +33,7 @@ namespace Lokas.Editor.FontCharset.Tests
             try
             {
                 Validate();
-                result = "PASS：Canvas 网格像素、预设更新/撤销、样式/Profile 切换、草稿隔离、保存/另存为、缺失/冲突 Key、默认样式、字体/fallback、停用恢复、遮罩、Prefab 保存/加载及源资产隔离。";
+                result = "PASS：Canvas 网格像素、预设更新/撤销、样式/Profile 切换、十次 Inspector 重建保持展开和草稿、草稿隔离、保存/另存为、缺失/冲突 Key、默认样式、字体/fallback、停用恢复、遮罩、Prefab 保存/加载及源资产隔离。";
                 File.WriteAllText(Output + "/result.txt", result);
                 Debug.Log(result);
             }
@@ -207,6 +207,7 @@ namespace Lokas.Editor.FontCharset.Tests
                     using (var editable = new SerializedObject(draft))
                         Assert(editable.FindProperty("faceColor").editable, "草稿参数被锁为只读。");
                     draft.faceColor = Color.blue;
+                    ValidateInspectorRebuild(applier, draft);
                     string originalPreset = EditorJsonUtility.ToJson(preset);
                     TMPStyleScenePreview.SetDraft(applier, draft);
                     Assert(text.canvasRenderer.GetMaterial().GetColor("_FaceColor") == Color.blue, "当前文本未预览草稿。");
@@ -264,6 +265,35 @@ namespace Lokas.Editor.FontCharset.Tests
                 return value;
             }
             finally { RenderTexture.active = old; DestroyImmediate(copy); }
+        }
+        private static void ValidateInspectorRebuild(TMPStyleApplier applier, FontStylePreset draft)
+        {
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(TMPStyleApplierEditor);
+            UnityEditor.Editor editor = null;
+            try
+            {
+                editor = UnityEditor.Editor.CreateEditor(applier);
+                type.GetProperty("showParameters", flags).SetValue(editor, true);
+                type.GetProperty("draft", flags).SetValue(editor, draft);
+                type.GetProperty("draftTarget", flags).SetValue(editor, applier);
+                for (int i = 0; i < 10; i++)
+                {
+                    DestroyImmediate(editor);
+                    editor = UnityEditor.Editor.CreateEditor(applier);
+                    Assert((bool)type.GetProperty("showParameters", flags).GetValue(editor), "Inspector 重建后样式参数折叠。");
+                    Assert(type.GetProperty("draft", flags).GetValue(editor) == draft && draft.faceColor == Color.blue, "Inspector 重建丢失草稿参数。");
+                }
+            }
+            finally
+            {
+                if (editor != null)
+                {
+                    type.GetProperty("draft", flags).SetValue(editor, null);
+                    type.GetProperty("draftTarget", flags).SetValue(editor, null);
+                    DestroyImmediate(editor);
+                }
+            }
         }
         private static void Assert(bool condition, string message) { if (!condition) throw new InvalidOperationException(message); }
     }

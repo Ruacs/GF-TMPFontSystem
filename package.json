@@ -1,6 +1,6 @@
 {
   "name": "com.ruacs.tmpfont-system",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "displayName": "GF TMPFont System",
   "description": "GF framework TMP language fonts, style presets, charset/SDF maintenance and live editor preview. Requires GameFramework and UnityGameFramework.Runtime assemblies and project integration.",
   "unity": "2022.3",

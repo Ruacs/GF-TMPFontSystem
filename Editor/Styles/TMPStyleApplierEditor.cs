@@ -13,30 +13,89 @@ public class TMPStyleApplierEditor : Editor
 
     private static List<string> s_CachedKeys;
     private static Dictionary<string, List<string>> s_KeySourceMap;
-    private FontStylePreset sourcePreset, draft;
-    private TMPStyleApplier draftTarget;
-    private string draftKey, sourceSnapshot, draftBaseline, newKey;
-    private TMPFontProfile saveProfile;
-    private bool showParameters, showSaveAs;
+    private sealed class AuthoringState
+    {
+        internal int TargetId, Users, Generation;
+        internal FontStylePreset Source, Draft;
+        internal TMPStyleApplier Target;
+        internal string Key, SourceSnapshot, Baseline, NewKey, Message;
+        internal TMPFontProfile SaveProfile;
+        internal bool Parameters, SaveAs;
+    }
+    private static readonly Dictionary<int, AuthoringState> s_Authoring = new Dictionary<int, AuthoringState>();
+    private AuthoringState authoring;
+    private FontStylePreset sourcePreset { get => authoring.Source; set => authoring.Source = value; }
+    private FontStylePreset draft { get => authoring.Draft; set => authoring.Draft = value; }
+    private TMPStyleApplier draftTarget { get => authoring.Target; set => authoring.Target = value; }
+    private string draftKey { get => authoring.Key; set => authoring.Key = value; }
+    private string sourceSnapshot { get => authoring.SourceSnapshot; set => authoring.SourceSnapshot = value; }
+    private string draftBaseline { get => authoring.Baseline; set => authoring.Baseline = value; }
+    private string newKey { get => authoring.NewKey; set => authoring.NewKey = value; }
+    private TMPFontProfile saveProfile { get => authoring.SaveProfile; set => authoring.SaveProfile = value; }
+    private bool showParameters
+    {
+        get => authoring.Parameters;
+        set { authoring.Parameters = value; SessionState.SetBool("Ruacs.TMPFont.Parameters." + authoring.TargetId, value); }
+    }
+    private bool showSaveAs { get => authoring.SaveAs; set => authoring.SaveAs = value; }
     private SerializedObject draftSerialized;
-    private string authoringMessage;
+    private string authoringMessage { get => authoring.Message; set => authoring.Message = value; }
 
-    private void OnEnable() { EditorApplication.projectChanged += ProjectChanged; Undo.undoRedoPerformed += Repaint; }
+    private void OnEnable()
+    {
+        int id = target == null ? GetInstanceID() : target.GetInstanceID();
+        if (!s_Authoring.TryGetValue(id, out authoring))
+        {
+            authoring = new AuthoringState { TargetId = id, Parameters = SessionState.GetBool("Ruacs.TMPFont.Parameters." + id, false) };
+            s_Authoring.Add(id, authoring);
+        }
+        authoring.Users++;
+        authoring.Generation++;
+        if (draft != null) draftSerialized = new SerializedObject(draft);
+        EditorApplication.projectChanged += ProjectChanged;
+        Undo.undoRedoPerformed += Repaint;
+    }
     private void OnDisable()
     {
         EditorApplication.projectChanged -= ProjectChanged;
         Undo.undoRedoPerformed -= Repaint;
-        ReleaseDraft();
+        draftSerialized?.Dispose();
+        draftSerialized = null;
+        if (authoring == null) return;
+        var state = authoring;
+        state.Users--;
+        int generation = ++state.Generation;
+        // Unity rebuilds Inspectors after preview/Undo changes. A replacement Editor created in
+        // this turn reuses the draft; only a genuinely closed/switched Inspector discards it.
+        EditorApplication.delayCall += () =>
+        {
+            if (state.Users != 0 || state.Generation != generation) return;
+            ReleaseStateDraft(state);
+            s_Authoring.Remove(state.TargetId);
+        };
     }
     private void ProjectChanged() { s_CachedKeys = null; Repaint(); }
     private void ReleaseDraft()
     {
-        if (draftTarget != null) TMPStyleScenePreview.SetDraft(draftTarget, null);
         draftSerialized?.Dispose();
         draftSerialized = null;
-        if (draft != null) { Undo.ClearUndo(draft); DestroyImmediate(draft); }
-        draft = null;
-        draftTarget = null;
+        ReleaseStateDraft(authoring);
+    }
+    private static void ReleaseStateDraft(AuthoringState state)
+    {
+        if (state.Target != null) TMPStyleScenePreview.SetDraft(state.Target, null);
+        if (state.Draft != null) { Undo.ClearUndo(state.Draft); DestroyImmediate(state.Draft); }
+        state.Draft = null;
+        state.Target = null;
+    }
+    [InitializeOnLoadMethod]
+    private static void RegisterReloadCleanup()
+    {
+        AssemblyReloadEvents.beforeAssemblyReload += () =>
+        {
+            foreach (var state in s_Authoring.Values) ReleaseStateDraft(state);
+            s_Authoring.Clear();
+        };
     }
 
     public override void OnInspectorGUI()
@@ -91,6 +150,11 @@ public class TMPStyleApplierEditor : Editor
         using (new EditorGUI.DisabledScope(true)) EditorGUILayout.ObjectField("当前预设", sourcePreset, typeof(FontStylePreset), false);
         if (changed && sourceSnapshot != snapshot)
             EditorGUILayout.HelpBox("来源预设已被其他操作修改。保存会用当前草稿覆盖；也可以另存为独立样式。", MessageType.Warning);
+        if (draftSerialized == null || draftSerialized.targetObject != draft)
+        {
+            draftSerialized?.Dispose();
+            draftSerialized = new SerializedObject(draft);
+        }
         var draftObject = draftSerialized;
         draftObject.Update();
         DrawPropertiesExcluding(draftObject, "m_Script");
