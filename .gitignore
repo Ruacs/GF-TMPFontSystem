@@ -1,0 +1,15 @@
+# Local editor/cache/export outputs; keep all Unity .meta files.
+/.idea/
+/.vscode/
+/Library/
+/Temp/
+/Backups/
+/Exports/
+/obj/
+/bin/
+*.csproj
+*.sln
+*.user
+*.unitypackage
+.DS_Store
+Thumbs.db

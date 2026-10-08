@@ -1,0 +1,177 @@
+{
+  "sourceProject": "GF_Template",
+  "kind": "initial-extraction-snapshot",
+  "scriptCount": 17,
+  "scripts": [
+    {
+      "sourcePath": "Assets/GameMain/CustomComponents/TMPFontSystem/FontStylePreset.cs",
+      "repositoryPath": "FontStylePreset.cs",
+      "guid": "9f7a6ecc398d9c04ea7c935cf342437f",
+      "sha256": "67e6c20b69bdeda2dbdd88d0dac24c0b566b3eac40244036995dd41e79064f54"
+    },
+    {
+      "sourcePath": "Assets/GameMain/CustomComponents/TMPFontSystem/LanguageEntry.cs",
+      "repositoryPath": "LanguageEntry.cs",
+      "guid": "e779de46451e4fc38c03f99200739c85",
+      "sha256": "52d93ca4fc697211b99f14f68245e8db904121bdffe7ab531b1aa662b22c0a15"
+    },
+    {
+      "sourcePath": "Assets/GameMain/CustomComponents/TMPFontSystem/TMPFontComponent.cs",
+      "repositoryPath": "TMPFontComponent.cs",
+      "guid": "b09e6733627868b4ca61b228ce12c1a6",
+      "sha256": "cdca934ca5f0f98f55b0901cb4accc843d581d7166c7a06c725f6d413a6826fe"
+    },
+    {
+      "sourcePath": "Assets/GameMain/CustomComponents/TMPFontSystem/TMPFontProfile.cs",
+      "repositoryPath": "TMPFontProfile.cs",
+      "guid": "51d53bef8ff739a45bfd6cabc5a4b400",
+      "sha256": "40ed3c220f7651c6407b4f33ca0451bbebd52a18e0fdabb371c7fae61a60bf57"
+    },
+    {
+      "sourcePath": "Assets/GameMain/CustomComponents/TMPFontSystem/TMPLanguageFontConfig.cs",
+      "repositoryPath": "TMPLanguageFontConfig.cs",
+      "guid": "3f27cda771aeba5418f0262fe3efba75",
+      "sha256": "344fe1b443788dd39ee7be430671a8942176a5446304172a63424a8747a15451"
+    },
+    {
+      "sourcePath": "Assets/GameMain/CustomComponents/TMPFontSystem/TMPStyleApplier.cs",
+      "repositoryPath": "TMPStyleApplier.cs",
+      "guid": "c0164be9304b1b94f88e0b2096737245",
+      "sha256": "ca376df2fe8bd41149c24591a5e47fa972ec42247e0ae75abb7eb0a0e3ecb35f"
+    },
+    {
+      "sourcePath": "Assets/AAA_DevAssets/Editor/FontCharset/FontCharsetCollector.cs",
+      "repositoryPath": "Editor/FontCharset/FontCharsetCollector.cs",
+      "guid": "82f08722ba9fd724a8113d2ca6d3deb9",
+      "sha256": "af653d6ae570f9c9d600ac6997aa58d04e3448fbb05422183f769caebb60ff15"
+    },
+    {
+      "sourcePath": "Assets/AAA_DevAssets/Editor/FontCharset/FontCharsetConfig.cs",
+      "repositoryPath": "Editor/FontCharset/FontCharsetConfig.cs",
+      "guid": "02852872b4df6f54dae8c0a0c710b986",
+      "sha256": "2ebc9f7a828374cbc80b105f0b1470cc7197ff2767863b7e35127fb6bb3be540"
+    },
+    {
+      "sourcePath": "Assets/AAA_DevAssets/Editor/FontCharset/FontCharsetService.cs",
+      "repositoryPath": "Editor/FontCharset/FontCharsetService.cs",
+      "guid": "b148e185d0b416344a6cbdf49b9e94a2",
+      "sha256": "392f8cd7989998b6a9d7ecf147fa771fd3aef699715ccb4354423f8c1a8df7d8"
+    },
+    {
+      "sourcePath": "Assets/AAA_DevAssets/Editor/FontCharset/FontCharsetWindow.cs",
+      "repositoryPath": "Editor/FontCharset/FontCharsetWindow.cs",
+      "guid": "69d1a028e8aa16d4f981beae0019ffcf",
+      "sha256": "55b4f664bdd70282fd01d783ff4610133ee241340a8162a08d835118692de476"
+    },
+    {
+      "sourcePath": "Assets/AAA_DevAssets/Editor/FontCharset/FontStylePreview.cs",
+      "repositoryPath": "Editor/Styles/FontStylePreview.cs",
+      "guid": "97d7a8761f555124d8c6a489bb29ee7e",
+      "sha256": "08adb485b4288eeeddfc7b0ce0f5db42b01eed025d9751a97f3710f6e3bb00a6"
+    },
+    {
+      "sourcePath": "Assets/AAA_DevAssets/Editor/FontCharset/FontStylePresetEditor.cs",
+      "repositoryPath": "Editor/Styles/FontStylePresetEditor.cs",
+      "guid": "0131e95d1681570429ed234d0e0b1893",
+      "sha256": "5126b6af2c5793ef85cd6da0530c18dc4cd80a992342e416033eacc9172b6c70"
+    },
+    {
+      "sourcePath": "Assets/GameMain/Editor/TMPFontProfileEditor.cs",
+      "repositoryPath": "Editor/Styles/TMPFontProfileEditor.cs",
+      "guid": "ae05982ed37918d4494b6fdbafedc89c",
+      "sha256": "36f2d5fc76d522bc65e4a0028e3196438638ce9d5680d436edc57148a847536c"
+    },
+    {
+      "sourcePath": "Assets/GameMain/Editor/TMPStyleApplierEditor.cs",
+      "repositoryPath": "Editor/Styles/TMPStyleApplierEditor.cs",
+      "guid": "be712f8e982d3df42a56c7ef86f0be29",
+      "sha256": "3e2580d105462b65cce9a8fbef51262ab1f922fb6f88942ea3b92098151955a3"
+    },
+    {
+      "sourcePath": "Assets/GameMain/Editor/TMPMaterialToPresetMenu.cs",
+      "repositoryPath": "Editor/Styles/TMPMaterialToPresetMenu.cs",
+      "guid": "310d720545a29d94aa89645cd46a2069",
+      "sha256": "e435997e64dddddc4d47fd53bf13c0bd3ac752c8efaeeca93e5bc2e6f8d4b87a"
+    },
+    {
+      "sourcePath": "Assets/AAA_DevAssets/Editor/FontCharset/Tests/FontCharsetValidation.cs",
+      "repositoryPath": "Editor/Tests/FontCharsetValidation.cs",
+      "guid": "7321bd609e88860409a4f93f22f3bca2",
+      "sha256": "7c0d84d205b4f5478ebf5063930cda73653869c0dd3ea5efa3bdc9bc220ad214"
+    },
+    {
+      "sourcePath": "Assets/AAA_DevAssets/Editor/FontCharset/Tests/FontStylePreviewValidation.cs",
+      "repositoryPath": "Editor/Tests/FontStylePreviewValidation.cs",
+      "guid": "4102fd598893eed46a7f05edfa3551d9",
+      "sha256": "16ad4a674abdbe673ee052e83275ab3bc4e7c185dc5b5e9da648e45e3f30a030"
+    }
+  ],
+  "projectReferences": [
+    {
+      "document": "Docs/README.md",
+      "projectPath": "Assets/GameMain/ScriptableObjects/TMPLanguageFontConfig.asset",
+      "fragment": ""
+    },
+    {
+      "document": "Docs/README.md",
+      "projectPath": "Assets/GameMain/ScriptableObjects/TMPLanguageEntries",
+      "fragment": ""
+    },
+    {
+      "document": "Docs/README.md",
+      "projectPath": "Assets/GameMain/Fonts",
+      "fragment": ""
+    },
+    {
+      "document": "Docs/README.md",
+      "projectPath": "Assets/GameMain/Fonts/TMPFontProfile.asset",
+      "fragment": ""
+    },
+    {
+      "document": "Docs/README.md",
+      "projectPath": "Assets/GameMain/Fonts/MaterialPreset",
+      "fragment": ""
+    },
+    {
+      "document": "Docs/README.md",
+      "projectPath": "Assets/AAA_DevAssets/Fonts/Fonts",
+      "fragment": ""
+    },
+    {
+      "document": "Docs/README.md",
+      "projectPath": "Assets/AAA_DevAssets/Fonts/Charset",
+      "fragment": ""
+    },
+    {
+      "document": "Docs/README.md",
+      "projectPath": "Assets/AAA_DevAssets/Fonts/Editor/FontCharsetConfig.asset",
+      "fragment": ""
+    },
+    {
+      "document": "Docs/README.md",
+      "projectPath": "Assets/AAA_DevAssets/Docs/Framework/Localization/README.md",
+      "fragment": "6-新语言接入与完整切换要求"
+    },
+    {
+      "document": "Docs/README.md",
+      "projectPath": "Assets/AAA_DevAssets/Docs/Framework/Localization/README.md",
+      "fragment": "6-新语言接入与完整切换要求"
+    },
+    {
+      "document": "Docs/FontAuthoring.md",
+      "projectPath": "Assets/AAA_DevAssets/Fonts/Charset",
+      "fragment": ""
+    },
+    {
+      "document": "Docs/FontAuthoring.md",
+      "projectPath": "Assets/GameMain/CustomComponents/BuiltinView/Font/unity_sdf_charset_loading.txt",
+      "fragment": ""
+    },
+    {
+      "document": "Docs/FontAuthoring.md",
+      "projectPath": "Assets/AAA_DevAssets/Fonts/Editor/FontCharsetConfig.asset",
+      "fragment": ""
+    }
+  ],
+  "sourceProjectConvertedToSubmodule": false
+}
