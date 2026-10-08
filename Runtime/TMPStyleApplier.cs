@@ -11,6 +11,7 @@ public class TMPStyleApplier : MonoBehaviour
 {
     [Tooltip("对应 TMPFontProfile 中配置的样式 key，留空则使用 fontAsset 默认材质")]
     [SerializeField] private string _styleKey = string.Empty;
+    public string StyleKey => _styleKey;
 
     private TMP_Text _text;
     private TMPFontComponent FontComponent => UnityGameFramework.Runtime.GameEntry.GetComponent<TMPFontComponent>();

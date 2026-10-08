@@ -2,7 +2,7 @@
 
 GF 框架的 UPM 字体组件：语言字体加载、样式预设与材质缓存、TMP 样式应用、字符集/SDF 同步及实时样式预览。
 
-包名：`com.ruacs.tmpfont-system`。版本：`0.2.0`。适用 Unity 2022.3，依赖 TextMeshPro 3.0.9 与 UGUI 1.0.0。
+包名：`com.ruacs.tmpfont-system`。版本：`0.3.0`。适用 Unity 2022.3，依赖 TextMeshPro 3.0.9 与 UGUI 1.0.0。
 
 ## 安装
 
@@ -11,7 +11,7 @@ GF 框架的 UPM 字体组件：语言字体加载、样式预设与材质缓存
 在 Window → Package Manager → ＋ → Add package from git URL 输入：
 
 ```text
-https://github.com/Ruacs/GF-TMPFontSystem.git#v0.2.0
+https://github.com/Ruacs/GF-TMPFontSystem.git#v0.3.0
 ```
 
 开发时可通过 Add package from disk 选择本地仓库的 `package.json`，或使用不带版本标签的 Git URL。私有仓库需提前配置 Git 凭据/SSH；UPM 不会弹出交互登录。正式工程固定版本标签，升级时改为新的标签并验证。
@@ -39,6 +39,7 @@ TMPFont?.Configure(new TMPFontProjectHost());
 
 - 字符集工具：Game Framework → 字体与字符集 → 打开窗口。
 - 样式预览：同菜单 → 预览样式，或选中 FontStylePreset，在 Inspector 调整参数、字号和背景。
+- 页面内调样式：选中 TMPStyleApplier，选择 Style Key，在“样式参数（草稿）”直接调整。保存更新当前共享预设；另存为新样式创建独立预设和 Key，再保存 Prefab / 场景以保留绑定。编辑态预览默认开启，Profile 选择仅用于编辑器，不改变运行时语言配置。
 - 默认制作配置：`Assets/AAA_DevAssets/Fonts/Editor/FontCharsetConfig.asset`。默认创建使用 MFont_CNS/CNT/JP/KR 四语言约定；真实数据和配置留在项目中。
 - 自动化：扫描全部、更新选中语言、恢复未完成更新。检查结果报告，不把菜单执行成功当作生成成功。
 
@@ -46,7 +47,7 @@ TMPFont?.Configure(new TMPFontProjectHost());
 
 ## 验证和升级
 
-编辑态可运行菜单中的 **运行接入协议验证**、**运行样式预览验证**、**运行工具验证**。协议验证检查加载器、合并请求、缓存、加载顺序和 UI/Profile 通知；它不模拟 PlayMode 生命周期。完整工具验证在临时副本生成图集，需要目标工程有效的制作配置。
+编辑态可运行菜单中的 **运行接入协议验证**、**运行样式预览验证**、**运行页面样式预览验证**、**运行工具验证**。页面验证需要至少两个 Static 字体，检查 Canvas 网格像素、遮罩、草稿/保存/另存为和 Prefab 保存/加载；临时资源自动清理。协议验证检查加载器、合并请求、缓存、加载顺序和 UI/Profile 通知；它不模拟 PlayMode 生命周期。完整工具验证在临时副本生成图集，需要目标工程有效的制作配置。
 
 正式接入还需在 PlayMode 检查启动加载、语言字体、页面样式、关闭重开及语言切换。UPM 的 Git 安装会锁定具体提交；刷新界面不等于升级到远端最新提交，正式升级请更新版本标签。
 
@@ -54,4 +55,4 @@ TMPFont?.Configure(new TMPFontProjectHost());
 
 ## 当前版本
 
-0.2.0 将原 Assets 组件转换为 UPM 包，并增加项目接入接口；详见 [变更记录](CHANGELOG.md)。初始源文件清单保存在 Documentation~/InitialSourceManifest.json，仅供追溯旧版，不是当前版本文件清单或验证结论。
+0.3.0 增加页面内编辑态预览与 TMPStyleApplier 样式草稿制作；0.2.0 完成 UPM 转换与项目接入接口。详见 [变更记录](CHANGELOG.md)。初始源文件清单保存在 Documentation~/InitialSourceManifest.json，仅供追溯旧版，不是当前版本文件清单或验证结论。

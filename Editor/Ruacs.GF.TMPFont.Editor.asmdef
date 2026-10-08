@@ -6,7 +6,8 @@
     "GameFramework",
     "UnityGameFramework.Runtime",
     "Unity.TextMeshPro",
-    "Unity.TextMeshPro.Editor"
+    "Unity.TextMeshPro.Editor",
+    "UnityEngine.UI"
   ],
   "includePlatforms": [
     "Editor"

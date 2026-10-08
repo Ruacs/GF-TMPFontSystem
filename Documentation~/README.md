@@ -115,7 +115,7 @@ TMPFontComponent 加载字体、选择 Profile、缓存材质
 2. 新样式通过 Create → TMP → FontStylePreset 创建 SO，或在已有预设 Inspector 点击“复制为新预设”。选择预览字体、输入测试文字，边看效果边设置 Face、Outline、Underlay，完成后点击“保存此预设”。参数为当前 Shader 支持的属性，缺少的 Shader 属性不会因创建 Preset 自动出现。
 3. 在目标 Profile 的 styles 中添加唯一 key 与 preset；跨语言共用或分别调样式按实际外观决定。
 4. 在 TMP_Text 节点挂 TMPStyleApplier，填写完全一致的 styleKey。组件负责字体/材质，文本内容通过本地化设置，字号、对齐、换行和 RectTransform 由页面布局控制。
-5. 保存 Prefab 后读回字段；Play 中等字体/配置就绪后检查，与编辑态直接指定材质的外观分别对照。
+5. 在 TMPStyleApplier 中预览、调整草稿并保存预设 / 另存为新样式，再保存 Prefab 读回字段；Play 中等字体/配置就绪后检查真实语言 Profile 的效果。
 
 ```csharp
 // applier 是已绑定的 TMPStyleApplier；当前 Profile 有 Default 键。
@@ -124,6 +124,18 @@ applier.SetStyleKey("Default");
 ```
 
 空 styleKey 或找不到对应 Preset 时使用当前字体的原始材质。空键不会自动选择名为 Default 的条目；要用 Default 预设必须填写该键。
+
+#### 直接在 TMPStyleApplier 调整页面样式（UPM 0.3.0 起）
+
+- 选中 Scene / Prefab 中的文本，选择 Style Key。编辑态预览默认开启，使用该文本当前的 TMP 字体；不提前执行运行时语言加载。
+- 展开“样式参数（草稿）”调整 Face、Outline、Underlay。草稿只预览当前选中对象；其他引用同一 Preset 的文本仍显示原参数。切换对象/Key 时未保存草稿会丢弃，可点“还原草稿”恢复。
+- “保存预设”更新当前共享 SO，引用它的文本同步改变；不会保存整个项目。默认材质没有 Preset 时不能覆盖字体材质，使用另存为创建样式。
+- “另存为新样式”选择目标 Profile、填写唯一的新 Key，再选择新 Preset 的保存位置。工具复制草稿、登记 Profile、切换当前 TMPStyleApplier；原预设保持原参数。新 SO / Profile 自动保存，页面绑定需保存 Prefab / 场景。只登记所选 Profile，其他语言的独立 Profile 需按使用范围同步 Key。
+- 多个 Profile 对同一 Key 使用不同 Preset 时，先指定“预览 Profile”；这个选项只影响编辑器预览，不修改运行时语言配置。多选可设置 Key，调参数请选单个文本。
+
+页面预览不替换已序列化的 TMP 字体 / 材质引用，临时材质不保存到页面；UGUI 遮罩与继承主材质的 fallback 子网格保留对应图集和遮罩状态。显式富文本材质与 Sprite 覆盖保留原设置。进入 Play Mode、停用组件、关闭预览或程序集重载时清理渲染覆盖；运行时仍由 TMPFontComponent 接管。实际字号、布局、字形覆盖与语言切换需运行验收。
+
+验证菜单：`Game Framework/字体与字符集/运行页面样式预览验证`。验证 Canvas 生成网格的实际像素、草稿隔离、保存/另存为、撤销、字体/fallback、遮罩及 Prefab 保存/重新加载，报告在 `Library/FontCharset/ScenePreviewValidation/`；需要两个含 A 字符的 Static 字体，临时测试资源自动清理。
 
 预设 Inspector 上方提供实时预览、预览字号、深/浅/自定义背景，以及“当前预设 / 默认材质 / 左右对照”。下方参数直接编辑当前 SO，支持 Undo；调独立效果前先复制，复制不会自动注册 Profile 或修改页面引用。预览字号、文字和背景不写入 Preset，也不改变页面字号或布局。
 

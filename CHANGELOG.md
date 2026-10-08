@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 — 2026-10-08
+
+- TMPStyleApplier 在 Scene / Prefab 编辑态直接预览当前字体的 Face、描边和阴影，支持 UGUI 遮罩与 fallback 子网格。
+- Inspector 内可调整样式草稿：保存更新共享预设；另存为创建独立预设、登记新 Key 并绑定当前文本。
+- 草稿只影响当前选中对象；不替换已保存的 TMP 字体/材质引用，不修改字体图集。
+- 可指定编辑态预览 Profile，冲突或缺失 Key 会提示；进入 Play Mode、停用组件与关闭预览时恢复。
+- Refresh 不再保存整个项目；修复缺失样式 Key 无法从下拉框重新选择的问题。
+- Canvas 重绘只复用预览材质；网格仅在文字/字体/参数变化时刷新。缓存组件列表并跳过隐藏 UI，避免选中组件时反复重建页面文字。
+- 增加页面预览验证菜单，验证渲染像素、草稿隔离、保存/另存为、撤销、遮罩、字体/fallback 与 Prefab 保存/加载。
+
 ## 0.2.0 — 2026-10-08
 
 - 转为 UPM 包 com.ruacs.tmpfont-system，划分 Runtime/Editor 程序集。
