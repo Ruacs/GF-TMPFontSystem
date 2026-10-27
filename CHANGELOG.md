@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 — 2026-10-27
+
+- `TMPStyleApplier` 统一样式、上下渐变、整段分层和当前文字的弧形排版；原有字段与 GUID 保持不变，新功能默认关闭。
+- `FontStylePreset.enableLayeredRendering` 为 UGUI 提供 Underlay -2 → Outline -1 → Face 0，共享最终 TMP 网格并支持字体 fallback 与遮罩。
+- Inspector 区分保存共享预设、保存到当前文字和另存为新样式；当前覆盖随场景/Prefab 保存，换语言仍更新字体。
+- 自带分层 Shader 与 include，通过包内 Resources 保留构建引用，不依赖工程的 TMP Essential Resources 路径。
+- 增加编辑态/运行态艺术字验证；旧版预设和场景无需批量迁移。
+
 ## 0.3.2 — 2026-10-08
 
 - 按目标 TMPStyleApplier 保留参数面板展开状态和样式草稿，避免 Inspector 重建时自动折叠并丢失修改。

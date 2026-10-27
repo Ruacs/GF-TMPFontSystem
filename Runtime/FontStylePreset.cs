@@ -13,6 +13,15 @@ public class FontStylePreset : ScriptableObject
     [Range(-1f, 1f)] public float faceDilate = 0f;
     [Range(0f, 1f)]  public float faceSoftness = 0f;
 
+    [Tooltip("整段文字的上下渐变；颜色与 TMP 顶点颜色相乘。")]
+    public bool enableFaceGradient;
+    public Color gradientTop = Color.white;
+    public Color gradientBottom = Color.white;
+
+    [Header("整段分层（仅 UGUI）")]
+    [Tooltip("固定绘制顺序：Underlay -2、Outline -1、Face 0。默认关闭，保留旧版效果。")]
+    public bool enableLayeredRendering;
+
     [Header("描边 (Outline) — Width > 0 时生效")]
     [Range(0f, 1f)] public float outlineWidth = 0f;
     public Color outlineColor = Color.black;

@@ -53,6 +53,7 @@ namespace Lokas.Editor.FontCharset
             EditorUtility.SetDirty(profile);
             var serialized = new SerializedObject(applier);
             serialized.FindProperty("_styleKey").stringValue = key;
+            serialized.FindProperty("_localStyleJson").stringValue = string.Empty;
             serialized.ApplyModifiedProperties();
             AssetDatabase.SaveAssetIfDirty(copy);
             AssetDatabase.SaveAssetIfDirty(profile);

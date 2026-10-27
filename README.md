@@ -55,4 +55,23 @@ TMPFont?.Configure(new TMPFontProjectHost());
 
 ## 当前版本
 
-0.3.0 增加页面内编辑态预览与 TMPStyleApplier 样式草稿制作；0.2.0 完成 UPM 转换与项目接入接口。详见 [变更记录](CHANGELOG.md)。初始源文件清单保存在 Documentation~/InitialSourceManifest.json，仅供追溯旧版，不是当前版本文件清单或验证结论。
+0.4.0 增加统一艺术字入口、分层/渐变/弧形和当前文字覆盖；0.3.0 增加页面内编辑态预览与 TMPStyleApplier 样式草稿制作；0.2.0 完成 UPM 转换与项目接入接口。详见 [变更记录](CHANGELOG.md)。初始源文件清单保存在 Documentation~/InitialSourceManifest.json，仅供追溯旧版，不是当前版本文件清单或验证结论。
+
+## 艺术字统一入口（0.4.0）
+
+选中文字上的 `TMPStyleApplier`，在原有样式草稿中调整字面、上下渐变、描边、底层和“整段分层”。UGUI 固定按 Underlay -2、Outline -1、Face 0 绘制，三层共享最终文字网格；文字内容、字号、换行仍在 TMP 中编辑。分层使用简化 SDF，不包含原材质的 Bevel、Glow 或自定义贴图效果。
+
+- **保存共享预设**：更新引用该 SO 的所有文字。
+- **保存到当前文字**：保存独立参数快照，只影响该文字，随场景/Prefab 持久化。运行时仍按语言 Profile 更新字体。点击“清除当前覆盖”恢复 Profile 外观。
+- **另存为新样式**：继续沿用创建 SO、登记新 Key 的流程。另存时自动清除当前覆盖，改为跟随新 Key。
+- **弧形排版**：保存在当前组件，不写入共享预设。半径倍数越大越平；关闭后恢复原始排版。已有启用的 `TMPCurvedText` 继续负责弯曲，避免叠加变形；包不自动移除旧组件。
+
+编辑预览不改写已保存的 TMP 字体/材质引用。分层仅支持 `TextMeshProUGUI`；3D TMP 可用渐变/弧形。分层、渐变和弧形均默认关闭。SDF 粗边仍受字体图集 Padding 限制，三层增加 UI 绘制开销，正式页面需按目标设备验收。
+
+验证入口：`Game Framework/字体与字符集/运行艺术字编辑验证`、`运行艺术字运行验证`。后者切到临时空场景进入 Play Mode，退出后恢复原场景；报告位于 `Library/FontCharset/ArtTextValidation/`。
+
+### 从 0.4.0 回退到 0.3.2
+
+Package Manager 的 Git URL 改回 `https://github.com/Ruacs/GF-TMPFontSystem.git#v0.3.2`，等待解析和编译。旧标签保留，不能移动或覆盖。现有组件和共享样式字段/GUID 未变，旧功能继续可用；新版弧形、整段分层、渐变和当前覆盖在旧包中不可用。
+
+**精确回到升级前外观**：同时恢复升级前备份的场景/Prefab、Preset/Profile 和包清单/锁定文件。只降级包不会撤销你升级后对共享预设原有颜色/描边参数的编辑；旧 Unity 序列化器重新保存资产时也可能丢弃未知新字段。降级前另存新版资产，避免丢失新配置。不要删除 `.meta` 或重建字体资产。

@@ -12,7 +12,8 @@ namespace Lokas.Editor.FontCharset
     internal sealed class FontStylePreview : IDisposable
     {
         private PreviewRenderUtility renderer;
-        private TextMeshPro text;
+        private TMP_Text text;
+        private Lokas.TMPArtTextRenderer effects;
         private TMP_FontAsset sourceFont, fontCopy;
         private Material material;
         public string MissingCharacters { get; private set; } = "";
@@ -23,9 +24,13 @@ namespace Lokas.Editor.FontCharset
             if (renderer == null)
             {
                 renderer = new PreviewRenderUtility();
-                var go = new GameObject("TMP style preview", typeof(TextMeshPro)) { hideFlags = HideFlags.HideAndDontSave };
-                renderer.AddSingleGO(go);
-                text = go.GetComponent<TextMeshPro>();
+                var canvasObject = new GameObject("TMP style preview canvas", typeof(RectTransform), typeof(Canvas)) { hideFlags = HideFlags.HideAndDontSave };
+                canvasObject.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
+                renderer.AddSingleGO(canvasObject);
+                var go = new GameObject("TMP style preview", typeof(TextMeshProUGUI)) { hideFlags = HideFlags.HideAndDontSave };
+                go.transform.SetParent(canvasObject.transform, false);
+                text = go.GetComponent<TextMeshProUGUI>();
+                effects = go.AddComponent<Lokas.TMPArtTextRenderer>();
                 text.isOrthographic = true;
                 text.richText = false;
                 text.enableAutoSizing = false;
@@ -54,8 +59,10 @@ namespace Lokas.Editor.FontCharset
             text.fontSize = size;
             text.rectTransform.sizeDelta = new Vector2(Mathf.Max(1, rect.width - 32), Mathf.Max(1, rect.height - 32));
             text.text = FilterMissing(sample ?? "");
+            effects.Configure(preset, null, false, 20, false);
             text.UpdateMeshPadding();
             text.ForceMeshUpdate();
+            Canvas.ForceUpdateCanvases();
             renderer.camera.orthographic = true;
             // Fixed scale: changing the preview font size must visibly change its size.
             renderer.camera.orthographicSize = rect.height * 0.5f;
@@ -65,6 +72,19 @@ namespace Lokas.Editor.FontCharset
             renderer.camera.clearFlags = CameraClearFlags.SolidColor;
             renderer.camera.backgroundColor = background;
             renderer.BeginPreview(rect, GUIStyle.none);
+            // Native Canvas objects are not composited by PreviewRenderUtility cameras.
+            if (preset != null && preset.enableLayeredRendering)
+            {
+                foreach (var layer in text.GetComponentsInChildren<Lokas.TMPArtLayerGraphic>())
+                    if (layer.SourceMesh != null)
+                    {
+                        // Preview meshes use MeshRenderers; use queues to retain Canvas sibling order.
+                        var layerMaterial = layer.materialForRendering;
+                        layerMaterial.renderQueue = 3002 + (int)layerMaterial.GetFloat("_Layer");
+                        renderer.DrawMesh(layer.SourceMesh, layer.transform.localToWorldMatrix, layerMaterial, 0);
+                    }
+            }
+            else renderer.DrawMesh(text.mesh, text.transform.localToWorldMatrix, text.canvasRenderer.GetMaterial(), 0);
             renderer.Render(true);
             return renderer.EndPreview();
         }

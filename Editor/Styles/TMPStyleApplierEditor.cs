@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -105,8 +105,31 @@ public class TMPStyleApplierEditor : Editor
         SerializedProperty styleKeyProp = serializedObject.FindProperty("_styleKey");
         EditorGUILayout.Space(2);
         DrawStyleKeyDropdown(styleKeyProp, "Style Key", Repaint);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_enableCurve"), new GUIContent("弧形排版"));
+        if (serializedObject.FindProperty("_enableCurve").boolValue)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("_curveStrength"), new GUIContent("弧形半径倍数（越大越平）"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("_curveDown"), new GUIContent("向下弯曲"));
+        }
+        if (targets.Length == 1 && ((TMPStyleApplier)target).HasLocalStyle)
+        {
+            EditorGUILayout.HelpBox("当前文字使用独立覆盖；切换语言仍更新字体，外观取本地覆盖。", MessageType.Info);
+            if (GUILayout.Button("清除当前覆盖，恢复 Profile 样式"))
+            {
+                Undo.RecordObject(target, "Clear local TMP style");
+                ((TMPStyleApplier)target).SetLocalStyle(null);
+                EditorUtility.SetDirty(target);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(target);
+                ReleaseDraft(); TMPStyleScenePreview.Refresh();
+            }
+        }
 
-        if (serializedObject.ApplyModifiedProperties()) { ReleaseDraft(); TMPStyleScenePreview.Refresh(); }
+        if (serializedObject.ApplyModifiedProperties())
+        {
+            ReleaseDraft();
+            if (Application.isPlaying) foreach (TMPStyleApplier applier in targets) applier.RefreshStyle();
+            else TMPStyleScenePreview.Refresh();
+        }
 
         if (!Application.isPlaying)
         {
@@ -159,10 +182,22 @@ public class TMPStyleApplierEditor : Editor
         draftObject.Update();
         DrawPropertiesExcluding(draftObject, "m_Script");
         if (draftObject.ApplyModifiedProperties()) TMPStyleScenePreview.SetDraft(applier, draft);
+        if (draft.enableLayeredRendering && !(applier.GetComponent<TMPro.TMP_Text>() is TMPro.TextMeshProUGUI))
+            EditorGUILayout.HelpBox("整段分层仅支持 UGUI；当前 3D TMP 仅应用字面渐变和弧形。", MessageType.Info);
         using (new EditorGUILayout.HorizontalScope())
         {
-            using (new EditorGUI.DisabledScope(sourcePreset == null))
-                if (GUILayout.Button("保存预设"))
+            if (GUILayout.Button("保存到当前文字"))
+            {
+                Undo.RecordObject(applier, "Save local TMP style");
+                applier.SetLocalStyle(draft);
+                EditorUtility.SetDirty(applier);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(applier);
+                draftBaseline = EditorJsonUtility.ToJson(draft);
+                authoringMessage = "独立覆盖已写入当前文字；请保存场景 / Prefab。";
+                TMPStyleScenePreview.Refresh();
+            }
+            using (new EditorGUI.DisabledScope(sourcePreset == null || !EditorUtility.IsPersistent(sourcePreset)))
+                if (GUILayout.Button("保存共享预设"))
                 {
                     TMPStylePresetAuthoring.Save(draft, sourcePreset);
                     sourceSnapshot = EditorJsonUtility.ToJson(sourcePreset);

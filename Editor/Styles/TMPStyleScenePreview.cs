@@ -83,7 +83,9 @@ namespace Lokas.Editor.FontCharset
         {
             preset = null;
             message = "";
-            return applier != null && Resolve(applier.StyleKey, out preset, out message);
+            if (applier == null) return false;
+            if (applier.HasLocalStyle) { preset = applier.GetLocalStylePreset(); return true; }
+            return Resolve(applier.StyleKey, out preset, out message);
         }
 
         public static string GetStatus(TMPStyleApplier applier)
@@ -91,7 +93,7 @@ namespace Lokas.Editor.FontCharset
             if (applier == null || !applier.enabled) return "组件已停用，不应用编辑态样式。";
             var text = applier.GetComponent<TMP_Text>();
             if (text == null || text.font == null) return "请先给文本设置 TMP 字体。";
-            if (!Resolve(applier.StyleKey, out var preset, out string message)) return message;
+            if (!TryGetPreset(applier, out var preset, out string message)) return message;
             return preset == null ? "当前字体的默认材质。预览不会替换已保存的材质引用。" :
                 "使用当前字体预览 " + preset.name + "；运行时仍按语言 Profile 应用。";
         }
@@ -133,12 +135,12 @@ namespace Lokas.Editor.FontCharset
                         !applier.gameObject.scene.IsValid() || !applier.gameObject.scene.isLoaded) continue;
                     var text = applier.GetComponent<TMP_Text>();
                     if (text == null || text.font == null || text.font.material == null || Padding == null ||
-                        !Resolve(applier.StyleKey, out var preset, out _)) continue;
+                        !TryGetPreset(applier, out var preset, out _)) continue;
                     int id = applier.GetInstanceID();
                     if (Drafts.TryGetValue(id, out var draft) && draft != null) preset = draft;
-                    if (preset == null && text.fontSharedMaterial == text.font.material) continue;
+                    if (preset == null && !applier.EnableCurve && text.fontSharedMaterial == text.font.material) continue;
                     live.Add(id);
-                    int signature = Fingerprint(applier.StyleKey, text.font, preset);
+                    int signature = Fingerprint(applier.StyleKey, text.font, preset) ^ applier.EnableCurve.GetHashCode() ^ applier.CurveStrength.GetHashCode() ^ applier.CurveDown.GetHashCode();
                     if (!Previews.TryGetValue(id, out var preview))
                     {
                         preview = new Preview { Applier = applier, Text = text };
@@ -190,7 +192,11 @@ namespace Lokas.Editor.FontCharset
                 hash = hash * 31 + preset.underlayColor.GetHashCode();
                 hash = hash * 31 + preset.underlayOffset.GetHashCode();
                 hash = hash * 31 + preset.underlayDilate.GetHashCode();
-                return hash * 31 + preset.underlaySoftness.GetHashCode();
+                hash = hash * 31 + preset.underlaySoftness.GetHashCode();
+                hash = hash * 31 + preset.enableLayeredRendering.GetHashCode();
+                hash = hash * 31 + preset.enableFaceGradient.GetHashCode();
+                hash = hash * 31 + preset.gradientTop.GetHashCode();
+                return hash * 31 + preset.gradientBottom.GetHashCode();
             }
         }
 
@@ -236,6 +242,7 @@ namespace Lokas.Editor.FontCharset
         {
             MeshRefreshCount++;
             var text = preview.Text;
+            preview.Applier.ConfigureEffects(preview.Preset, preview.Material);
             // Resolve ordinary TMP dirtiness first; then calculate padding against the preview only.
             text.UpdateMeshPadding();
             text.ForceMeshUpdate(ignoreActiveState: true);
@@ -348,6 +355,7 @@ namespace Lokas.Editor.FontCharset
         {
             var preview = Previews[id];
             if (preview.Text != null) preview.Text.OnPreRenderText -= preview.TextChanged;
+            preview.Applier?.ClearEffects();
             Restore(preview);
             DestroyMaterials(preview);
             Previews.Remove(id);
